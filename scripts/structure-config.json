@@ -1,0 +1,19 @@
+{
+  "required": [
+    { "path": "architecture", "type": "dir" },
+    { "path": "blocks", "type": "dir" },
+    { "path": "contracts", "type": "dir" },
+    { "path": "docs", "type": "dir" },
+    { "path": "scripts", "type": "dir" },
+    { "path": "package.json", "type": "file" },
+    { "path": "README.md", "type": "file" },
+    { "path": "eslint.config.js", "type": "file" },
+    { "path": "jest.config.js", "type": "file" },
+    { "path": "scripts/ai-task-engine.js", "type": "file" },
+    { "path": "scripts/context-generation.js", "type": "file" },
+    { "path": "scripts/stage-engine.js", "type": "file" },
+    { "path": "scripts/token-budget.js", "type": "file" },
+    { "path": "scripts/validation-engine.js", "type": "file" },
+    { "path": "scripts/cli.js", "type": "file" }
+  ]
+}
