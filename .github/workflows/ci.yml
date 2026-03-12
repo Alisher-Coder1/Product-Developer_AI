@@ -1,0 +1,48 @@
+name: CI (GitHub Actions)
+
+on:
+  push:
+    branches:
+      - main
+      - stage-0-preparation   # временно, после завершения этапа можно удалить
+  pull_request:
+    branches:
+      - main                  # запуск на все PR, нацеленные на main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]   # тестирование на нескольких LTS-версиях
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'                 # автоматическое кэширование npm-зависимостей
+
+      - name: Install dependencies
+        run: npm ci                    # быстрая и детерминированная установка
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run build (if present)
+        run: npm run build --if-present
+
+      - name: Check Jest setup
+        run: npm run test 
+
+      - name: Check project structure
+        run: node scripts/validate-structure.js
+
+      # Архитектурная валидация (будет добавлена на этапе 3)
+      # - name: Run architecture validation
+      #   run: npm run validate:arch
+      #   continue-on-error: true       # пока не проваливать CI, если скрипт отсутствует

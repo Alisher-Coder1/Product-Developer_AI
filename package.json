@@ -1,0 +1,31 @@
+{
+  "name": "product-developer-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "jest --passWithNoTests",
+    "test:check": "jest --showConfig --config jest.config.js",
+    "validate": "node scripts/validation-engine.js",
+    "context": "node scripts/generate-context.js",
+    "tokens": "node scripts/token-count.js",
+    "prompt": "node scripts/assemble-prompt.js",
+    "build": "echo 'No build step defined'"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "^16.0.0",
+    "eslint": "^10.0.3",
+    "gpt-tokenizer": "^3.4.0",
+    "jest": "^30.3.0"
+  },
+  "bin": {
+    "pos": "./scripts/cli.js"
+  },
+  "dependencies": {
+    "commander": "^14.0.3"
+  }
+}
