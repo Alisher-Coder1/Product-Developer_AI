@@ -8,6 +8,7 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "test": "jest",
     "test:check": "jest --showConfig --config jest.config.js",
     "validate": "node scripts/validation-engine.js",
     "context": "node scripts/generate-context.js",
