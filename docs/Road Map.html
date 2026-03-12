@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Engineering OS — Roadmap v1.1 (Core MVP)</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #2563eb;
+      --soft: #eff6ff;
+      --ok: #166534;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 10px 30px rgba(17,24,39,.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+    .hero, .section, .roadmap-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 28px;
+      margin-bottom: 22px;
+      background: linear-gradient(135deg, #fff, #f8fbff);
+    }
+    .section {
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .roadmap-card {
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 6px solid var(--accent);
+    }
+    h1 { margin: 0 0 10px; font-size: 34px; line-height: 1.15; }
+    h2 { margin: 0 0 12px; font-size: 24px; border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+    h3 { margin: 18px 0 8px; font-size: 20px; }
+    p { margin: 8px 0; }
+    ul { margin: 10px 0 0; padding-left: 20px; }
+    li { margin-bottom: 8px; list-style-type: none; }
+    li input[type="checkbox"] { margin-right: 10px; }
+    pre {
+      margin: 12px 0 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      overflow: auto;
+      border: 1px solid #1e293b;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f9fafb; }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .badge.planned { background: #e5e7eb; color: #374151; }
+    .badge.in-progress { background: #fef3c7; color: #92400e; }
+    .badge.completed { background: #d1fae5; color: #065f46; }
+    .badge.milestone { background: var(--accent); color: white; }
+    .progress-bar {
+      width: 100%;
+      background: #e5e7eb;
+      border-radius: 999px;
+      height: 20px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 20px;
+      background: var(--accent);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 30px;
+    }
+    .note {
+      background: var(--soft);
+      border: 1px solid #dbeafe;
+      color: #1e3a8a;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status-green { background-color: #10b981; }
+    .status-yellow { background-color: #f59e0b; }
+    .status-gray { background-color: #9ca3af; }
+    .task-list {
+      margin: 10px 0;
+      padding-left: 0;
+    }
+    .task-list li {
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .task-list li.completed label {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .method-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 0.9em;
+      border: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Product Engineering OS — Roadmap v1.1 (Core MVP)</h1>
+    <p>Дорожная карта разработана на основе утверждённого документа <strong>Architecture Freeze v1.1 (финальная версия с улучшениями)</strong>. Позволяет отслеживать прогресс выполнения в интерактивном режиме. Все изменения сохраняются в браузере.</p>
+    <div class="note">
+      <strong>Период выполнения:</strong> 01.04.2026 – 31.07.2026 (4 месяца, сжатые сроки)<br>
+      <strong>Целевая версия:</strong> v1.1 (Core MVP Engines + CLI + документация)
+    </div>
+  </section>
+
+  <!-- Общий прогресс -->
+  <section class="section">
+    <h2>Общий прогресс выполнения</h2>
+    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+      <div style="flex: 2; min-width: 250px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <span>Общая готовность</span>
+          <span><strong id="overall-percent">0%</strong></span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="overall-progress" style="width: 0%;"></div>
+        </div>
+      </div>
+      <div style="flex: 1;">
+        <span><span class="status-indicator status-green"></span> Завершено: <span id="completed-count">0</span>/<span id="total-tasks">0</span></span><br>
+        <span><span class="status-indicator status-yellow"></span> В работе: <span id="inprogress-count">0</span></span><br>
+        <span><span class="status-indicator status-gray"></span> Запланировано: <span id="planned-count">0</span></span>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:15px;">Отмечайте выполненные задачи — прогресс пересчитывается автоматически. Данные сохраняются в браузере.</p>
+  </section>
+
+  <!-- Этапы -->
+  <h2>Этапы реализации Core MVP</h2>
+
+  <!-- ЭТАП 0: Подготовка -->
+  <div class="roadmap-card" id="stage0">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage0-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">01.04 – 15.04.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage0-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 0: Подготовка и формализация</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage0-tasks">
+          <li><input type="checkbox" id="task0_1"> <label for="task0_1">Создать репозиторий, настроить структуру проекта согласно архитектурному фризу</label></li>
+          <li><input type="checkbox" id="task0_2"> <label for="task0_2">Разработать детальные спецификации 5 движков в папке architecture/engines/ (форматы, алгоритмы, интерфейсы)</label></li>
+          <li><input type="checkbox" id="task0_3"> <label for="task0_3">Определить форматы обмена данными (JSON, YAML, Markdown) и утвердить их</label></li>
+          <li><input type="checkbox" id="task0_4"> <label for="task0_4">Настроить окружение: линтеры (ESLint), тестовые фреймворки (Jest), CI (GitHub Actions)</label></li>
+          <li><input type="checkbox" id="task0_5"> <label for="task0_5">Создать каркас CLI (заглушки команд pos init, pos start, …)</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Использование шаблонов (генерация структуры через скрипт).<br>
+          - Спецификации в Markdown с диаграммами (Mermaid).<br>
+          - Стандартные конфигурации ESLint + Prettier.<br>
+          - Настройка GitHub Actions для линтинга и тестов.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения (DoD)</h4>
+        <ul>
+          <li>Все спецификации утверждены и находятся в репозитории.</li>
+          <li>Структура проекта соответствует фризу.</li>
+          <li>CLI выводит help и принимает команды.</li>
+          <li>CI зелёный.</li>
+        </ul>
+        <h4>Тестирование</h4>
+        <ul>
+          <li>Ревью спецификаций архитектором.</li>
+          <li>Автоматическая проверка структуры скриптом.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭТАП 1: Context Generation + Token Budget -->
+  <div class="roadmap-card" id="stage1">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage1-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">16.04 – 15.05.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage1-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 1: Context Generation и Token Budget</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage1-tasks">
+          <li><input type="checkbox" id="task1_1"> <label for="task1_1">Реализовать Context Generation Engine: сбор документов из product/, architecture/, domain/ и т.д. в generated/project-context.md</label></li>
+          <li><input type="checkbox" id="task1_2"> <label for="task1_2">Реализовать Token Budget Engine: подсчёт токенов (использовать библиотеку типа `gpt-tokenizer`), проверка лимитов</label></li>
+          <li><input type="checkbox" id="task1_3"> <label for="task1_3">CLI: команды `pos context` (сборка) и `pos tokens` (оценка)</label></li>
+          <li><input type="checkbox" id="task1_4"> <label for="task1_4">Разработать механизм summary mode: обрезка контекста до лимита (приоритет по слоям)</label></li>
+          <li><input type="checkbox" id="task1_5"> <label for="task1_5">Написать unit-тесты с покрытием не менее 70% для обоих движков</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Парсинг Markdown-файлов, извлечение заголовков и секций.<br>
+          - Для подсчёта токенов: GPT-3/4 tokenizer (cl100k_base).<br>
+          - Реализация summary mode: обрезка менее важных разделов (например, детали реализации, комментарии).<br>
+          - Тестирование на синтетических проектах.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения</h4>
+        <ul>
+          <li>Контекст генерируется корректно, включая все обязательные разделы.</li>
+          <li>Токены считаются с точностью >95% (сравнение с OpenAI токенизатором).</li>
+          <li>При превышении лимита создаётся сокращённая версия.</li>
+        </ul>
+        <h4>Интеграционное тестирование</h4>
+        <ul>
+          <li>Прогон на тестовом проекте с разными объёмами.</li>
+          <li>Проверка summary mode на граничных случаях.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭТАП 2: Stage Engine + AI Task Engine -->
+  <div class="roadmap-card" id="stage2">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage2-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">16.05 – 15.06.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage2-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 2: Stage Engine и AI Task Engine</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage2-tasks">
+          <li><input type="checkbox" id="task2_1"> <label for="task2_1">Разработать Stage Engine: модель этапов (product → architecture → …), проверка stage gates (наличие артефактов)</label></li>
+          <li><input type="checkbox" id="task2_2"> <label for="task2_2">Разработать AI Task Engine: декомпозиция задачи в микрозадачи на основе контекста и правил (использовать LLM или шаблоны)</label></li>
+          <li><input type="checkbox" id="task2_3"> <label for="task2_3">CLI: команды `pos start` (guided workflow по этапам) и `pos prompt` (сборка промпта для микрозадачи)</label></li>
+          <li><input type="checkbox" id="task2_4"> <label for="task2_4">Интегрировать с Context Generation для получения актуального контекста</label></li>
+          <li><input type="checkbox" id="task2_5"> <label for="task2_5">Написать тесты для проверки логики этапов и декомпозиции</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Stage Engine: конечный автомат на JavaScript, проверка существования файлов/директорий.<br>
+          - AI Task Engine: сначала на основе правил (rule-based), позже с использованием LLM (через OpenAI API).<br>
+          - Guided workflow: интерактивный CLI с вводом/выбором.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения</h4>
+        <ul>
+          <li>Stage Engine корректно блокирует переход, если артефакты не готовы.</li>
+          <li>Task Engine разбивает задачу (например, "добавить аутентификацию") на микрозадачи.</li>
+          <li>`pos prompt` возвращает промпт с контекстом.</li>
+        </ul>
+        <h4>Тестирование</h4>
+        <ul>
+          <li>Тесты на сценарии: отсутствие файла, неверный этап.</li>
+          <li>Оценка качества декомпозиции экспертом.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭТАП 3: Validation Engine и безопасность -->
+  <div class="roadmap-card" id="stage3">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage3-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">16.06 – 10.07.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage3-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 3: Validation Engine и безопасность промптов</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage3-tasks">
+          <li><input type="checkbox" id="task3_1"> <label for="task3_1">Реализовать Validation Engine: интеграция с ESLint, Jest, Dependency Cruiser, OpenAPI validator</label></li>
+          <li><input type="checkbox" id="task3_2"> <label for="task3_2">Добавить проверки архитектурного compliance (dependency rules, naming)</label></li>
+          <li><input type="checkbox" id="task3_3"> <label for="task3_3">CLI: команда `pos validate` с запуском всех проверок и отчётом</label></li>
+          <li><input type="checkbox" id="task3_4"> <label for="task3_4">Реализовать политику безопасности промптов (Prompt Data Safety): сканирование на секреты, маскировка</label></li>
+          <li><input type="checkbox" id="task3_5"> <label for="task3_5">Написать тесты для валидации (позитивные/негативные сценарии)</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Вызов внешних инструментов через `child_process` или их API.<br>
+          - Сбор результатов в единый JSON-отчёт.<br>
+          - Для безопасности: регулярные выражения, библиотека `detect-secrets`.<br>
+          - Маскировка данных в промптах перед отправкой в AI.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения</h4>
+        <ul>
+          <li>Команда `pos validate` выполняет все проверки и возвращает отчёт.</li>
+          <li>При ошибке система предлагает варианты исправления (fix prompt).</li>
+          <li>Секреты в промптах обнаруживаются и маскируются.</li>
+        </ul>
+        <h4>Интеграционное тестирование</h4>
+        <ul>
+          <li>Прогон на проекте с намеренными ошибками.</li>
+          <li>Проверка обнаружения тестовых секретов.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭТАП 4: Интеграция, примеры, документирование -->
+  <div class="roadmap-card" id="stage4">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage4-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">11.07 – 25.07.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage4-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 4: Интеграция, примеры, документирование</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage4-tasks">
+          <li><input type="checkbox" id="task4_1"> <label for="task4_1">Интегрировать все движки в единый CLI-сценарий (сквозной проход)</label></li>
+          <li><input type="checkbox" id="task4_2"> <label for="task4_2">Создать сквозной пример (от идеи до сгенерированного кода) и зафиксировать в docs/example.md</label></li>
+          <li><input type="checkbox" id="task4_3"> <label for="task4_3">Наполнить документацию: developer-journey.md, glossary.md, platform-metrics.md, reuse-review.md, quick-start.md</label></li>
+          <li><input type="checkbox" id="task4_4"> <label for="task4_4">Добавить примеры артефактов (project-context, промпты) в docs/examples/</label></li>
+          <li><input type="checkbox" id="task4_5"> <label for="task4_5">Провести регрессионное тестирование и оптимизацию производительности</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Интеграционное тестирование всего пайплайна.<br>
+          - Документация в Markdown с автогенерацией оглавления.<br>
+          - Примеры на основе реального мини-проекта (например, ToDo API).<br>
+          - Оптимизация: кэширование результатов, параллельный запуск проверок.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения</h4>
+        <ul>
+          <li>Сквозной пример успешно выполняется и даёт ожидаемый результат.</li>
+          <li>Все обязательные документы присутствуют и соответствуют стандартам.</li>
+          <li>Метрики производительности укладываются в целевые значения (например, время валидации <10 сек).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭТАП 5: Релиз и обратная связь -->
+  <div class="roadmap-card" id="stage5">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px;">
+      <div>
+        <span class="badge planned" id="stage5-badge">ЗАПЛАНИРОВАНО</span>
+        <span class="badge milestone">26.07 – 31.07.2026</span>
+      </div>
+      <div>
+        <span class="status-indicator status-gray"></span> Прогресс: <span id="stage5-progress">0%</span>
+      </div>
+    </div>
+    <h3>Этап 5: Релиз v1.1 и сбор обратной связи</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Задачи этапа</h4>
+        <ul class="task-list" id="stage5-tasks">
+          <li><input type="checkbox" id="task5_1"> <label for="task5_1">Публикация пакета в npm (или другом registry) с документацией</label></li>
+          <li><input type="checkbox" id="task5_2"> <label for="task5_2">Запуск пилотного проекта с реальной командой (1-2 разработчика)</label></li>
+          <li><input type="checkbox" id="task5_3"> <label for="task5_3">Сбор метрик эксплуатации (time to task, validation pass rate, token spend и др.)</label></li>
+          <li><input type="checkbox" id="task5_4"> <label for="task5_4">Обработка обратной связи: исправление критических багов, обновление документации</label></li>
+          <li><input type="checkbox" id="task5_5"> <label for="task5_5">Формирование отчёта о соответствии метрикам и плана на v2</label></li>
+        </ul>
+        <h4>Методы решения</h4>
+        <div class="method-box">
+          - Подготовка README, инструкции по установке.<br>
+          - Сбор логов через встроенный механизм метрик.<br>
+          - Опрос разработчиков, трекинг ошибок в GitHub Issues.
+        </div>
+      </div>
+      <div>
+        <h4>Критерии завершения</h4>
+        <ul>
+          <li>Платформа доступна через `npm install -g @product-os/cli`.</li>
+          <li>Пилотный проект завершён, метрики собраны.</li>
+          <li>Критические баги исправлены, обратная связь зафиксирована.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Структура проекта (из фриза) -->
+  <section class="section">
+    <h2>Структура проекта Core MVP</h2>
+    <pre>my-product/
+├── .os/ └── config.json
+├── product/ vision.md, roadmap.md, product-flow.md, dod.md
+├── architecture/ system-overview.md, dependency-rules.md, context-generation.md, profiles-registry.md,
+│                ai-task-engine.md, token-budget.md, ai-knowledge-policy.md, architecture-compliance.md,
+│                feedback-loop.md, engines/ (5 спецификаций)
+├── domain/ entities/, aggregates/, value-objects/
+├── application/ use-cases/
+├── contracts/ api/, events/, database/, types/
+├── blocks/ frontend/, backend/, database/ (каждый с overview.md, tasks.md, contracts.md)
+├── quality/ testing-strategy.md, test-levels.md
+├── security/ authentication.md, prompt-data-safety.md
+├── operations/ monitoring.md
+├── prompts/ templates/
+├── generated/ project-context.md
+├── scripts/ pos.js, generate-context.js, assemble-prompt.js, token-count.js, validate-architecture.js
+└── docs/ knowledge-map.md, glossary.md, developer-journey.md, platform-metrics.md, reuse-review.md, quick-start.md, examples/</pre>
+  </section>
+
+  <!-- Метрики отслеживания прогресса (с целями из финальной версии) -->
+  <section class="section">
+    <h2>Метрики отслеживания хода выполнения</h2>
+    <table>
+      <thead><tr><th>Метрика</th><th>Целевое значение</th><th>Метод сбора</th><th>Периодичность</th></tr></thead>
+      <tbody>
+        <tr><td>Процент выполненных задач этапа</td><td>100% к концу этапа</td><td>Чекбоксы в данном roadmap (JS + localStorage)</td><td>В реальном времени</td></tr>
+        <tr><td>Покрытие кода тестами</td><td>≥70% (unit), ≥50% (integration)</td><td>Jest coverage report</td><td>После каждого этапа</td></tr>
+        <tr><td>Количество критических багов</td><td>0 на релизе</td><td>Issue tracker</td><td>Непрерывно</td></tr>
+        <tr><td>Прохождение validation loop в CI</td><td>100% обязательных проверок</td><td>CI pipeline</td><td>При каждом коммите</td></tr>
+        <tr><td>Соответствие архитектурным compliance checks</td><td>Нет нарушений</td><td>Скрипт validate-architecture.js</td><td>При каждом коммите</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Инструкция по использованию -->
+  <section class="section">
+    <h2>Как пользоваться дорожной картой</h2>
+    <ul>
+      <li>Отмечайте выполненные задачи — прогресс этапов и общий прогресс обновляются автоматически.</li>
+      <li>Состояние сохраняется в localStorage вашего браузера, поэтому после закрытия страницы данные не пропадут.</li>
+      <li>Для сброса прогресса можно очистить localStorage или вручную снять все флажки.</li>
+      <li>Рекомендуется обновлять статусы ежедневно для актуальной картины.</li>
+    </ul>
+  </section>
+
+  <p class="footer">Roadmap v1.1 — соответствует Architecture Freeze v1.1 (финальная версия с улучшениями).</p>
+</div>
+
+<!-- Скрипт для управления прогрессом и сохранением -->
+<script>
+  (function() {
+    // Функция подсчёта общего прогресса и обновления интерфейса
+    function updateAllProgress() {
+      const stages = ['stage0', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
+      let totalTasks = 0;
+      let completedTasks = 0;
+      let inProgressStages = 0; // будем считать по этапам
+
+      stages.forEach(stageId => {
+        const checkboxes = document.querySelectorAll(`#${stageId}-tasks input[type="checkbox"]`);
+        const total = checkboxes.length;
+        const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        // Обновить прогресс этапа
+        const progressSpan = document.getElementById(`${stageId}-progress`);
+        if (progressSpan) progressSpan.innerText = percent + '%';
+        const fillBar = document.querySelector(`#${stageId} .progress-fill`);
+        if (fillBar) fillBar.style.width = percent + '%';
+
+        // Обновить бейдж этапа и индикатор
+        const badge = document.getElementById(`${stageId}-badge`);
+        const indicator = document.querySelector(`#${stageId} .status-indicator`);
+        if (badge && indicator) {
+          if (percent === 100) {
+            badge.className = 'badge completed';
+            badge.innerText = 'ЗАВЕРШЕНО';
+            indicator.className = 'status-indicator status-green';
+          } else if (percent > 0) {
+            badge.className = 'badge in-progress';
+            badge.innerText = 'В РАБОТЕ';
+            indicator.className = 'status-indicator status-yellow';
+          } else {
+            badge.className = 'badge planned';
+            badge.innerText = 'ЗАПЛАНИРОВАНО';
+            indicator.className = 'status-indicator status-gray';
+          }
+        }
+
+        totalTasks += total;
+        completedTasks += completed;
+      });
+
+      // Общий прогресс
+      const overallPercent = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+      document.getElementById('overall-progress').style.width = overallPercent + '%';
+      document.getElementById('overall-percent').innerText = overallPercent + '%';
+      document.getElementById('completed-count').innerText = completedTasks;
+      document.getElementById('total-tasks').innerText = totalTasks;
+
+      // Подсчёт этапов в работе/завершено (для информации)
+      const inProgressCount = document.querySelectorAll('.badge.in-progress').length;
+      const completedCount = document.querySelectorAll('.badge.completed').length;
+      const plannedCount = stages.length - inProgressCount - completedCount;
+      document.getElementById('inprogress-count').innerText = inProgressCount;
+      document.getElementById('planned-count').innerText = plannedCount;
+    }
+
+    // Загрузить сохранённое состояние из localStorage
+    function loadState() {
+      for (let i = 0; i < 6; i++) {
+        for (let j = 1; j <= 5; j++) {
+          const taskId = `task${i}_${j}`;
+          const checkbox = document.getElementById(taskId);
+          if (checkbox) {
+            const saved = localStorage.getItem(taskId);
+            if (saved === 'true') checkbox.checked = true;
+            else if (saved === 'false') checkbox.checked = false;
+          }
+        }
+      }
+      updateAllProgress();
+    }
+
+    // Сохранить состояние чекбокса
+    function saveState(e) {
+      const checkbox = e.target;
+      localStorage.setItem(checkbox.id, checkbox.checked);
+      updateAllProgress();
+    }
+
+    // Назначить обработчики всем чекбоксам
+    function attachListeners() {
+      for (let i = 0; i < 6; i++) {
+        for (let j = 1; j <= 5; j++) {
+          const taskId = `task${i}_${j}`;
+          const checkbox = document.getElementById(taskId);
+          if (checkbox) {
+            checkbox.removeEventListener('change', saveState);
+            checkbox.addEventListener('change', saveState);
+          }
+        }
+      }
+    }
+
+    // Инициализация
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      attachListeners();
+    });
+  })();
+</script>
+</body>
+</html>

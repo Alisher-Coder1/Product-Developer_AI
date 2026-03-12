@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Engineering OS — Architecture Freeze v1.1 (финальный аудит)</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #2563eb;
+      --soft: #eff6ff;
+      --ok: #166534;
+      --warn: #92400e;
+      --shadow: 0 10px 30px rgba(17,24,39,.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 32px 20px 56px; }
+    .hero, .section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 28px;
+      margin-bottom: 22px;
+      background: linear-gradient(135deg, #fff, #f8fbff);
+    }
+    .section { padding: 22px; margin-bottom: 18px; }
+    h1 { margin: 0 0 10px; font-size: 34px; line-height: 1.15; }
+    h2 { margin: 0 0 12px; font-size: 24px; }
+    h3 { margin: 18px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    ul { margin: 10px 0 0; padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    pre {
+      margin: 12px 0 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      overflow: auto;
+      border: 1px solid #1e293b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    code { font-family: Consolas, Menlo, Monaco, monospace; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f9fafb; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .ok { background: #ecfdf3; color: var(--ok); }
+    .warn { background: #fff7ed; color: var(--warn); }
+    .note {
+      background: var(--soft);
+      border: 1px solid #dbeafe;
+      color: #1e3a8a;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    .muted { color: var(--muted); }
+    .footer { text-align: center; color: var(--muted); font-size: 14px; margin-top: 24px; }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+    .example {
+      background: #f0f4f8;
+      border-left: 4px solid var(--accent);
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Product Engineering OS — Architecture Freeze v1.1</h1>
+    <p>Версия v1.1 собрана после внешнего аудита и фиксирует обновлённую архитектурную позицию платформы: лёгкое, но масштабируемое ядро для сложных задач. Документ предназначен для повторного архитектурного аудита и служит базой для последующего Roadmap как SSOT.</p>
+    <p><strong>Ключевое изменение версии 1.1:</strong> переход от концепции «полной платформы сразу» к модели Core MVP + Advanced Extensions.</p>
+  </section>
+
+  <!-- 1. Базовая позиция -->
+  <section class="section">
+    <span class="badge ok">АРХИТЕКТУРНОЕ РЕШЕНИЕ</span>
+    <h2>1. Базовая позиция системы</h2>
+    <p><strong>Product Engineering OS</strong> — это AI-native engineering framework для одного разработчика или небольшой команды.</p>
+    <p>Цель платформы:</p>
+    <ul>
+      <li>быстро запускать продукты со сложной логикой;</li>
+      <li>сохранять архитектурную дисциплину при работе с AI;</li>
+      <li>уменьшать галлюцинации модели через управляемый контекст;</li>
+      <li>обеспечивать пошаговую разработку через этапы, задачи и микрозадачи;</li>
+      <li>оставлять ядро простым, а сложность подключать модулями.</li>
+    </ul>
+    <div class="note">Формула платформы: <strong>Simple Core + Stable Interfaces + Optional Modules = Scalable Platform</strong>.</div>
+  </section>
+
+  <!-- 2. Принципы -->
+  <section class="section">
+    <h2>2. Главные архитектурные принципы</h2>
+    <div class="grid">
+      <div>
+        <h3>Documentation Driven Development</h3>
+        <p>Ключевые знания системы фиксируются в документах, а не в неявных договорённостях.</p>
+        <h3>Domain Driven Design</h3>
+        <p>Домен определяет бизнес-понятия, правила и инварианты.</p>
+        <h3>Contract First Architecture</h3>
+        <p>Интерфейсы системы фиксируются до реализации.</p>
+        <h3>Block Based Implementation</h3>
+        <p>Код реализуется блоками с чёткими границами ответственности.</p>
+      </div>
+      <div>
+        <h3>AI Context Architecture</h3>
+        <p>AI получает только релевантный и слоисто организованный контекст.</p>
+        <h3>Microtask Driven Development</h3>
+        <p>Большие задачи дробятся на маленькие проверяемые шаги.</p>
+        <h3>Stage Gating</h3>
+        <p>Нижние этапы не запускаются, пока верхние артефакты не зафиксированы.</p>
+        <h3>Core First</h3>
+        <p>Сначала реализуется MVP ядра, затем advanced-расширения.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Состав ядра -->
+  <section class="section">
+    <span class="badge ok">MVP CORE</span>
+    <h2>3. Архитектурное решение по составу ядра</h2>
+    <p>После аудита принято решение строить сначала <strong>Core MVP</strong> с минимальным набором движков.</p>
+    <table>
+      <thead><tr><th>Engine</th><th>Назначение</th></tr></thead>
+      <tbody>
+        <tr><td>Stage Engine</td><td>Управляет последовательностью этапов и stage gates.</td></tr>
+        <tr><td>AI Task Engine</td><td>Превращает задачи в микрозадачи и управляет их исполнением.</td></tr>
+        <tr><td>Context Generation</td><td>Собирает актуальный проектный контекст для AI.</td></tr>
+        <tr><td>Token Budget</td><td>Считает и ограничивает расходы токенов до запуска prompt.</td></tr>
+        <tr><td>Validation</td><td>Проверяет результат AI через tests, lint, contracts и базовые quality gates.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Всё остальное — Context Router, Vector Knowledge, Reuse Engine, Design Source Engine, Full AI Pipeline — выносится в advanced-расширения и не является обязательной частью v1 ядра.</div>
+
+    <h3>3.1 Спецификации движков (кратко)</h3>
+    <p>Каждый движок описывается в <code>architecture/engines/*-spec.md</code> с указанием:</p>
+    <ul>
+      <li>форматы входных/выходных данных (JSON, YAML, Markdown);</li>
+      <li>алгоритм работы (псевдокод или диаграмма);</li>
+      <li>пример использования;</li>
+      <li>интерфейсы взаимодействия с другими движками.</li>
+    </ul>
+    <p>Пример сигнатуры AI Task Engine:</p>
+    <pre>Вход: { task: "Добавить аутентификацию", layer: "application", constraints: [...] }
+Выход: [ { microtask: "Создать модель User", ... }, ... ]</pre>
+  </section>
+
+  <!-- 4. Слоистая архитектура (исправлено) -->
+  <section class="section">
+    <h2>4. Слоистая архитектура платформы</h2>
+    <p>Фиксируется следующая иерархия слоёв:</p>
+    <pre>product
+↓
+architecture
+↓
+domain
+↓
+application
+↓
+contracts
+↓
+blocks</pre>
+    <p>Cross-cutting слои: quality, security, operations.</p>
+    <table>
+      <thead><tr><th>Слой</th><th>Роль</th><th>Что задаёт</th></tr></thead>
+      <tbody>
+        <tr><td>product</td><td>Intent layer</td><td>Зачем система существует и какие задачи решает</td></tr>
+        <tr><td>architecture</td><td>Structure layer</td><td>Как устроена система и по каким правилам</td></tr>
+        <tr><td>domain</td><td>Business layer</td><td>Сущности, инварианты, агрегаты</td></tr>
+        <tr><td>application</td><td>Use case layer</td><td>Сценарии, workflows, orchestration</td></tr>
+        <tr><td>contracts</td><td>Interface layer</td><td>API, events, DB schema, shared types</td></tr>
+        <tr><td>blocks</td><td>Implementation layer</td><td>Frontend, backend, database, integration, release</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 5. Dependency Rules -->
+  <section class="section">
+    <h2>5. Dependency Rules</h2>
+    <p>Зависимости разрешены только сверху вниз по утверждённой иерархии.</p>
+    <pre>product → architecture → domain → application → contracts → blocks</pre>
+    <ul>
+      <li><strong>domain</strong> не зависит от application, contracts, blocks;</li>
+      <li><strong>application</strong> зависит только от domain и architecture rules;</li>
+      <li><strong>contracts</strong> фиксируют стабильные интерфейсы и не зависят от реализации;</li>
+      <li><strong>blocks</strong> реализуют contracts и use cases, но не меняют domain semantics;</li>
+      <li><strong>quality / security / operations</strong> применяются поперечно к реализации и валидации.</li>
+    </ul>
+    <p>Пример автоматической проверки: <code>npx depcruise --validate .dependency-rules.js src</code> (используется dependency-cruiser).</p>
+  </section>
+
+  <!-- 6. Структура Core MVP -->
+  <section class="section">
+    <h2>6. Финальная структура Core MVP</h2>
+    <pre>my-product/
+├── .os/ └── config.json
+├── product/ vision.md, roadmap.md, product-flow.md, dod.md
+├── architecture/ system-overview.md, dependency-rules.md, context-generation.md, profiles-registry.md,
+│                ai-task-engine.md, token-budget.md, ai-knowledge-policy.md, architecture-compliance.md,
+│                feedback-loop.md, и папка engines/ со спецификациями пяти движков
+├── domain/ entities/, aggregates/, value-objects/
+├── application/ use-cases/
+├── contracts/ api/, events/, database/, types/
+├── blocks/ frontend/, backend/, database/ (каждый с overview.md, tasks.md, contracts.md)
+├── quality/ testing-strategy.md, test-levels.md
+├── security/ authentication.md, prompt-data-safety.md
+├── operations/ monitoring.md
+├── prompts/ templates/
+├── generated/ project-context.md
+├── scripts/ pos.js, generate-context.js, assemble-prompt.js, token-count.js, validate-architecture.js
+└── docs/ knowledge-map.md, glossary.md, developer-journey.md, platform-metrics.md, reuse-review.md</pre>
+    <div class="note">Полные спецификации движков находятся в <code>architecture/engines/</code>.</div>
+  </section>
+
+  <!-- 7. Glossary -->
+  <section class="section">
+    <h2>7. Glossary Requirement</h2>
+    <p>В v1.1 добавляется обязательный <code>docs/glossary.md</code>.</p>
+    <p>Минимальные термины: layer, engine, block, task, microtask, prompt, context, contract, artifact, reusable asset.</p>
+  </section>
+
+  <!-- 8. Developer Journey -->
+  <section class="section">
+    <h2>8. Developer Journey</h2>
+    <p>Сценарий использования платформы разработчиком фиксируется в <code>docs/developer-journey.md</code>:</p>
+    <pre>Idea / requirement
+↓ Product clarification
+↓ Architecture stage
+↓ Domain definition
+↓ Use case definition
+↓ Contract definition
+↓ Block task creation
+↓ Microtask generation
+↓ Context build
+↓ Prompt assembly
+↓ Token estimate
+↓ AI execution
+↓ Validation
+↓ Feedback loop</pre>
+  </section>
+
+  <!-- 9. AI Knowledge Policy -->
+  <section class="section">
+    <h2>9. AI Knowledge Policy</h2>
+    <ul>
+      <li><strong>общие знания программирования</strong> — не индексируются;</li>
+      <li><strong>project-specific intelligence</strong> — индексируются: архитектура, домен, контракты, решения, стандарты кода.</li>
+    </ul>
+    <div class="note">Векторная база знаний не входит в ядро v1.</div>
+  </section>
+
+  <!-- 10. Context Architecture -->
+  <section class="section">
+    <h2>10. Context Architecture</h2>
+    <p>Контекст собирается в <code>generated/project-context.md</code> из источников:</p>
+    <table>
+      <thead><tr><th>Layer</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>System Architecture</td><td>architecture/*</td></tr>
+        <tr><td>Domain Model</td><td>domain/*</td></tr>
+        <tr><td>Use Case</td><td>application/use-cases/*</td></tr>
+        <tr><td>Contracts</td><td>contracts/*</td></tr>
+        <tr><td>Implementation Context</td><td>blocks/*</td></tr>
+        <tr><td>Constraints</td><td>quality/*, security/*, operations/*</td></tr>
+      </tbody>
+    </table>
+    <p>Принцип: <strong>не максимальный контекст, а оптимальный контекст</strong>.</p>
+  </section>
+
+  <!-- 11. Token Budget Policy -->
+  <section class="section">
+    <h2>11. Token Budget Policy</h2>
+    <table>
+      <thead><tr><th>Prompt Type</th><th>Recommended Budget</th></tr></thead>
+      <tbody>
+        <tr><td>Product / Architecture</td><td>до 12k</td></tr>
+        <tr><td>Domain / Application</td><td>до 8k</td></tr>
+        <tr><td>Implementation microtask</td><td>до 10k</td></tr>
+        <tr><td>Review / Fix</td><td>до 6k</td></tr>
+      </tbody>
+    </table>
+    <p>Если лимит превышен: использовать summary mode, уменьшить контекст, предложить разбить задачу.</p>
+    <h3>Пример работы Token Budget</h3>
+    <div class="example">Запрос: реализовать REST API для пользователей. Контекст содержит 15k токенов.  
+      Действие: включается summary mode – ключевые части контекста (схема БД, основные эндпоинты) сохраняются, второстепенные детали обрезаются. Итоговый промпт: 9.8k токенов.</div>
+  </section>
+
+  <!-- 12. Validation & Testing (с конкретными инструментами) -->
+  <section class="section">
+    <h2>12. Validation & Testing</h2>
+    <p>Validation Engine связан с тестированием и использует:</p>
+    <ul>
+      <li><strong>unit tests</strong> — Jest (JavaScript/TypeScript), PyTest (Python);</li>
+      <li><strong>integration tests</strong> — Supertest, TestContainers;</li>
+      <li><strong>contract tests</strong> — Pact, OpenAPI validator;</li>
+      <li><strong>architecture compliance</strong> — Dependency cruiser, ESLint (import rules);</li>
+      <li><strong>basic security</strong> — Trivy (зависимости), ESLint-plugin-security.</li>
+    </ul>
+    <p>Validation loop:</p>
+    <pre>AI output
+↓
+lint / tests / contract checks / architecture checks
+↓
+pass → accept
+fail → fix prompt → re-run</pre>
+  </section>
+
+  <!-- 13. Feedback Loop -->
+  <section class="section">
+    <h2>13. Feedback Loop</h2>
+    <p>Если наблюдаются:</p>
+    <ul>
+      <li>повторные ошибки AI на одном типе задач;</li>
+      <li>постоянные нарушения контрактов;</li>
+      <li>двусмысленность в use cases или domain rules;</li>
+      <li>частые проблемы в validation loop;</li>
+    </ul>
+    <p>то это сигнал обновить архитектурные документы, code standards, task specifications, prompt templates.</p>
+  </section>
+
+  <!-- 14. Architecture Compliance -->
+  <section class="section">
+    <h2>14. Architecture Compliance</h2>
+    <p>Минимальные compliance checks:</p>
+    <ul>
+      <li>нарушение layer dependencies;</li>
+      <li>нарушение naming / code standards;</li>
+      <li>расхождение contracts и реализации;</li>
+      <li>отсутствие обязательных tests;</li>
+      <li>нарушение prompt data safety.</li>
+    </ul>
+    <p>Пример нарушения: код из backend обращается к фронтенд-компоненту — блокируется CI.</p>
+  </section>
+
+  <!-- 15. Advanced Extensions -->
+  <section class="section">
+    <span class="badge warn">ADVANCED</span>
+    <h2>15. Что переносится из ядра в расширения</h2>
+    <pre>architecture/event-flow.md
+architecture/data-ownership.md
+architecture/context-router.md
+architecture/ai-development-pipeline.md
+architecture/integration-patterns.md
+knowledge/ library/ design ingestion/ stack adapters/ ci generation/ vector retrieval/ reuse engine/</pre>
+  </section>
+
+  <!-- 16. Code Standards Position -->
+  <section class="section">
+    <h2>16. Code Standards Position</h2>
+    <p>Единый стандарт кода включает: naming conventions, file structure, comment rules, generator usage, dependency discipline. Будет формализован отдельно и включён в validation gates.</p>
+  </section>
+
+  <!-- 17. Reuse Strategy -->
+  <section class="section">
+    <h2>17. Reuse Strategy Position</h2>
+    <ul>
+      <li>в конце каждой фазы проводится <strong>reuse review</strong>;</li>
+      <li>выявляются potential reusable assets;</li>
+      <li>фиксируются в <code>docs/reuse-review.md</code>;</li>
+      <li>полноценная reusable library вводится позже.</li>
+    </ul>
+  </section>
+
+  <!-- 18. Metrics (конкретизированы) -->
+  <section class="section">
+    <h2>18. Metrics</h2>
+    <table>
+      <thead><tr><th>Метрика</th><th>Единица</th><th>Сбор</th><th>Цель</th></tr></thead>
+      <tbody>
+        <tr><td>time to task completion</td><td>минуты</td><td>логи CLI</td><td>< 30 мин для типовой задачи</td></tr>
+        <tr><td>validation pass rate</td><td>%</td><td>CI</td><td>> 80% с первого раза</td></tr>
+        <tr><td>token spend per feature</td><td>токены</td><td>token budget engine</td><td>< 15k в среднем</td></tr>
+        <tr><td>failed generation rate</td><td>%</td><td>лог AI Task Engine</td><td>< 10%</td></tr>
+        <tr><td>reuse count</td><td>штук</td><td>reuse review</td><td>> 5 за проект</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 19. CLI (расширен) -->
+  <section class="section">
+    <h2>19. CLI as Mandatory Platform Entry Point</h2>
+    <p>Основной способ работы — через командный интерфейс <code>pos</code>.</p>
+    <h3>Обязательные команды Core MVP</h3>
+    <pre>pos init          # создание структуры проекта
+pos start         # запуск guided workflow
+pos context       # сборка project-context.md
+pos prompt        # сборка промпта для задачи
+pos tokens        # оценка токенов и контроль бюджета
+pos validate      # запуск validation loop</pre>
+    <p>CLI реализуется в <code>scripts/pos.js</code> с модулями generate-context, assemble-prompt, token-count, validate-architecture.</p>
+  </section>
+
+  <!-- 20. Итоговая позиция -->
+  <section class="section">
+    <h2>20. Итоговая архитектурная позиция v1.1</h2>
+    <p>Product Engineering OS v1.1 фиксируется как <strong>MVP ядро с формальными спецификациями движков</strong>, developer journey, glossary, metrics и архитектурным feedback loop.</p>
+    <p>Стратегия развития:</p>
+    <pre>v1   — Core MVP Engines
+v1.1 — Formal specs and governance
+v2   — Guided usage and advanced routing
+v3   — Knowledge layer and reusable library
+v4   — Autonomous AI development capabilities</pre>
+  </section>
+
+  <!-- 21. Примеры артефактов (новое) -->
+  <section class="section">
+    <h2>21. Примеры артефактов</h2>
+    <h3>Пример project-context.md (фрагмент)</h3>
+    <div class="example"># Project Context: MyProduct (2026-03-12)
+## System Architecture
+- Стек: React, Node.js, PostgreSQL
+- Основные модули: Auth, Billing, Notifications
+
+## Domain Model
+- User: id, email, role
+- Order: id, userId, total, status
+
+## Use Case: Создание заказа
+- Вход: userId, товары
+- Выход: orderId
+- Правила: корзина не пуста
+
+## Contracts
+- POST /api/orders { userId, items[] } → { orderId }</div>
+
+    <h3>Пример промпта для микрозадачи</h3>
+    <div class="example">Задача: реализовать POST /api/orders в контроллере.
+Контекст: (ссылка на project-context.md, стандарты кода)
+Требования:
+- использовать Express
+- валидировать вход через Joi
+- вызвать сервис createOrder
+- вернуть 201 с orderId</div>
+
+    <h3>Пример работы Token Budget при превышении</h3>
+    <div class="example">Собран контекст: 18k токенов (лимит 12k).
+Применён summary mode: удалены детальные логи, оставлены только схемы и ключевые описания.
+Результат: 11.2k токенов → промпт выполнен.</div>
+  </section>
+
+  <!-- 22. Политика безопасности промптов (детализация) -->
+  <section class="section">
+    <h2>22. Безопасность промптов (Prompt Data Safety)</h2>
+    <p>В <code>security/prompt-data-safety.md</code> фиксируются правила:</p>
+    <ul>
+      <li>автоматическое сканирование промптов на наличие секретов (API-ключи, пароли, токены) с помощью регулярных выражений и детекторов (например, <code>detect-secrets</code>);</li>
+      <li>маскирование чувствительных данных: замена на <code>[REDACTED]</code> перед отправкой в AI;</li>
+      <li>логирование промптов только в обезличенном виде (удаление персональных данных);</li>
+      <li>запрет на включение в контекст файлов с секретами (<code>.env</code>, <code>*secret*</code>).</li>
+    </ul>
+  </section>
+
+  <!-- 23. Quick Start (новое) -->
+  <section class="section">
+    <h2>23. Quick Start (как начать использовать)</h2>
+    <pre># Установка (через npm)
+npm install -g @product-os/cli
+
+# Создание нового проекта
+pos init my-project
+cd my-project
+
+# Запустить guided flow для первой фичи
+pos start
+
+# Собрать контекст вручную
+pos context
+
+# Оценить токены для текущей задачи
+pos tokens --task "описание"
+
+# Выполнить валидацию после генерации
+pos validate</pre>
+    <p>Подробнее — в <code>docs/setup-guide.md</code>.</p>
+  </section>
+
+  <!-- Подвал -->
+  <p class="footer">Architecture Freeze v1.1 — финальная версия после аудита, дополненная примерами и деталями реализации. Готово к утверждению и переходу в Roadmap.</p>
+</div>
+</body>
+</html>
