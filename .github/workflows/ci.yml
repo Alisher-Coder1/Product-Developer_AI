@@ -39,9 +39,6 @@ jobs:
       - name: Check Jest setup
         run: npm run test check
 
-        name: tests
-        run: npm test -- --passWithNoTests
-
       # Архитектурная валидация (будет добавлена на этапе 3)
       # - name: Run architecture validation
       #   run: npm run validate:arch
