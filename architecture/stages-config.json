@@ -1,0 +1,47 @@
+{
+  "stageOrder": [
+    "product",
+    "architecture",
+    "domain",
+    "application",
+    "contracts",
+    "blocks"
+  ],
+  "stages": {
+    "product": {
+      "requiredArtifacts": [
+        "product/vision.md",
+        "product/roadmap.md"
+      ]
+    },
+    "architecture": {
+      "requiredArtifacts": [
+        "architecture/system-overview.md",
+        "architecture/dependency-rules.md"
+      ]
+    },
+    "domain": {
+      "requiredArtifacts": [
+        "domain/entities/",
+        "domain/aggregates/"
+      ]
+    },
+    "application": {
+      "requiredArtifacts": [
+        "application/use-cases/"
+      ]
+    },
+    "contracts": {
+      "requiredArtifacts": [
+        "contracts/api/",
+        "contracts/database/"
+      ]
+    },
+    "blocks": {
+      "requiredArtifacts": [
+        "blocks/frontend/",
+        "blocks/backend/"
+      ]
+    }
+  }
+}
